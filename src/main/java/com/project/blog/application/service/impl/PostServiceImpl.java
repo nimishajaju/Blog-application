@@ -65,7 +65,7 @@ public class PostServiceImpl implements PostService {
         if(post== null){
             throw  new ResourceNotFoundException("post", "postId", postId);
         }
-        post.setPost_title(postDTO.getPost_title());
+        post.setTitle(postDTO.getTitle());
         post.setContent(postDTO.getContent());
         post.setImageName(postDTO.getImageName());
 
@@ -140,7 +140,10 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<PostDTO> search(String keyword) {
-        return List.of();
+        List<Post> posts= postRepo.findByTitleContaining(keyword);
+        List<PostDTO> postDTOS= posts.stream().map((post)-> posttoDto(post)).collect(Collectors.toList());
+
+        return postDTOS;
     }
 
     public PostDTO posttoDto(Post post){

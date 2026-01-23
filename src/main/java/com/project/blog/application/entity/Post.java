@@ -19,7 +19,7 @@ public class Post {
     private Integer postId;
 
     @Column(name = "title",nullable = false, length = 100)
-    private String post_title;
+    private String title;
 
 @Column(length =1000,nullable = false)
     private String content;
