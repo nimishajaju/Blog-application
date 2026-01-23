@@ -133,6 +133,7 @@ public class PostServiceImpl implements PostService {
         if (user==null){
             throw new ResourceNotFoundException("user", "userId", userId);
         }
+
         List<Post> allPostByUser= postRepo.findByUser(user);
         List<PostDTO>  allPostsByUser= allPostByUser.stream().map((post)-> posttoDto(post)).collect(Collectors.toList());
         return allPostsByUser;
