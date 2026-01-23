@@ -18,7 +18,7 @@ public class PostDTO {
 
     private Integer postId;
 
-    private String post_title;
+    private String title;
 
     private String content;
 
