@@ -16,7 +16,7 @@ import java.util.Date;
 @Setter
 public class PostDTO {
 
-    private Integer post_id;
+    private Integer postId;
 
     private String post_title;
 
