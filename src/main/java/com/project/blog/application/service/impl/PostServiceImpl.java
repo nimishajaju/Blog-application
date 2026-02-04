@@ -10,6 +10,7 @@ import com.project.blog.application.repository.CategoryRepo;
 import com.project.blog.application.repository.PostRepo;
 import com.project.blog.application.repository.UserRepository;
 import com.project.blog.application.service.PostService;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -95,8 +96,8 @@ public class PostServiceImpl implements PostService {
         Pageable p = PageRequest. of(pageNumber,pageSize,sort);
         Page<Post> allPost= postRepo.findAll(p);
         List<Post> allposts= allPost.getContent();
-
-       List<PostDTO> postDTOS= allposts.stream().map((post) -> posttoDto(post) ).collect(Collectors.toList());
+        List<PostDTO> postDTOS= allposts.stream()
+                        .map((post) -> posttoDto(post) ).collect(Collectors.toList());
        PostResponse postResponse = new PostResponse();
        postResponse.setContent(postDTOS);
        postResponse.setPageNumber(allPost.getNumber());
@@ -117,25 +118,63 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostDTO> getAllPostByCategory(Integer categoryId) {
+    public PostResponse getAllPostByCategory(Integer categoryId, Integer pageNumber, Integer pageSize,String sortBy, String sortDir) {
+
         Category category = categoryRepo.findById(categoryId).orElse(null);
         if (category== null){
             throw  new ResourceNotFoundException("category","categoryId", categoryId);
         }
-        List<Post> allPostByCategory= postRepo.findByCategory(category);
-       List<PostDTO> allPostsByCategory= allPostByCategory.stream().map((post )-> posttoDto(post)).collect(Collectors.toList());
-        return allPostsByCategory;
+        Sort sort=null;
+        if(sortDir.equalsIgnoreCase("asc")){
+          sort= sort.by(sortBy).ascending();
+        }
+        else {
+            sort= sort.by(sortBy).descending();
+        }
+        Pageable p= PageRequest.of(pageNumber,pageSize, sort);
+        Page<Post> allPostByCategory1= postRepo.findByCategory(category, p);
+        List<Post> allPost= allPostByCategory1.getContent();
+       List<PostDTO> allPostsByCategory= allPost.stream()
+               .map((post )-> posttoDto(post)).collect(Collectors.toList());
+
+       PostResponse postResponse= new PostResponse();
+       postResponse.setContent(allPostsByCategory);
+       postResponse.setPageNumber(allPostByCategory1.getNumber());
+       postResponse.setPageSize(allPostByCategory1.getSize());
+       postResponse.setTotalElements(allPostByCategory1.getTotalElements());
+       postResponse.setTotalPages(allPostByCategory1.getTotalPages());
+       postResponse.setLastPage(allPostByCategory1.isLast());
+
+        return postResponse;
     }
 
     @Override
-    public List<PostDTO> getAllPostByUser(Integer userId) {
+    public PostResponse getAllPostByUser(Integer userId, Integer pageNumber, Integer pageSize,String sortBy, String sortDir) {
+
         User user = userRepository.findById(userId).orElse(null);
         if (user==null){
             throw new ResourceNotFoundException("user", "userId", userId);
         }
-        List<Post> allPostByUser= postRepo.findByUser(user);
-        List<PostDTO>  allPostsByUser= allPostByUser.stream().map((post)-> posttoDto(post)).collect(Collectors.toList());
-        return allPostsByUser;
+        Sort sort= null;
+        if(sortDir.equalsIgnoreCase("asc")){
+            sort= sort.by(sortBy).ascending();
+        }
+        else {
+            sort= sort.by(sortBy).descending();
+        }
+        Pageable p= PageRequest.of(pageNumber,pageSize,sort);
+        Page<Post> allPostByUser1= postRepo.findByUser(user, p);
+        List<Post> allPosts= allPostByUser1.getContent();
+        List<PostDTO>  allPostsByUser= allPosts.stream()
+                .map((post)-> posttoDto(post)).collect(Collectors.toList());
+        PostResponse postResponse = new PostResponse();
+        postResponse.setContent(allPostsByUser);
+        postResponse.setPageNumber(allPostByUser1.getNumber());
+        postResponse.setPageSize(allPostByUser1.getSize());
+        postResponse.setTotalElements(allPostByUser1.getTotalElements());
+        postResponse.setTotalPages(allPostByUser1.getTotalPages());
+        postResponse.setLastPage(allPostByUser1.isLast());
+        return postResponse;
     }
 
     @Override
