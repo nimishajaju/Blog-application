@@ -8,6 +8,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,6 +31,12 @@ public class GlobalException {
         });
         return new ResponseEntity<Map<String,String>>(resp,HttpStatus.BAD_REQUEST );
 
+        }
+
+        @ExceptionHandler(IOException.class)
+    public ResponseEntity<ResponseApi> ioExceptionHandler(IOException ex){
+        String message= ex.getMessage();
+        return  new ResponseEntity<>(new ResponseApi(message,false),HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
