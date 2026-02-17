@@ -20,4 +20,6 @@ public interface UserService {
 
     void deleteUserById(Integer user_id);
 
+    UserDTO registerNewUser (UserDTO userDTO);
+
 }

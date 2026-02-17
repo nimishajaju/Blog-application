@@ -1,13 +1,16 @@
 package com.project.blog.application.service.impl;
 
+import com.project.blog.application.entity.Role;
 import com.project.blog.application.entity.User;
 import com.project.blog.application.exceptions.ResourceNotFoundException;
 import com.project.blog.application.payloads.UserDTO;
+import com.project.blog.application.repository.RoleRepo;
 import com.project.blog.application.repository.UserRepository;
 import com.project.blog.application.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.autoconfigure.WebMvcProperties;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,6 +18,11 @@ import java.util.stream.Collectors;
 @Service
 public class userServiceImpl implements UserService {
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private RoleRepo roleRepo;
 
     @Autowired
     private UserRepository userRepository;
@@ -78,9 +86,20 @@ public class userServiceImpl implements UserService {
 
     }
 
+    @Override
+    public UserDTO registerNewUser(UserDTO userDTO) {
+        User user= this.dtotoUser(userDTO);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        Role role = roleRepo.findById(502).get();
+        user.getRoles().add(role);
+        userRepository.save(user);
+        UserDTO userDTO1= this.userToDto(user);
+
+        return userDTO1;
+    }
+
     private User dtotoUser(UserDTO userDTO){
         User user= modelMapper.map(userDTO, User.class);
-
 
 //        User user= new User();
 //        user.setName(userDTO.getName());

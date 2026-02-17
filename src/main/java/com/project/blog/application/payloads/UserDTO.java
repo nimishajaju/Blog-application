@@ -4,6 +4,9 @@ import jakarta.persistence.Column;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
+import java.util.HashSet;
+import java.util.Set;
+
 
 @NoArgsConstructor
 @Getter
@@ -26,4 +29,6 @@ public class UserDTO {
     @NotEmpty(message = "write something in about")
     @Size(min = 10)
     private String about;
+
+    private Set<RoleDto> roles= new HashSet<>();
 }
