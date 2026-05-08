@@ -1,3 +1,5 @@
+# Blog Application — Spring Boot Backend
+
 A backend-focused blog application built using Java, Spring Boot, MySQL, and REST APIs.
 
 The application allows users to securely create, update, delete, and manage blog posts with image upload support, comments functionality, JWT authentication, role-based authorization, pagination, and API-based communication.
